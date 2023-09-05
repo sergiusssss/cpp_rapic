@@ -1,5 +1,5 @@
 name: PR
-run-name: ${{ github.event.pull_request.title }} - PR verification
+run-name: PR verification - ${{ github.event.pull_request.title }}
 on: pull_request
 jobs:
   build-and-run-tests:
@@ -45,4 +45,4 @@ jobs:
             os: windows-latest,
             cmake_args: -T ClangCl,
           }
-        build_type: [Release, Debug] # Better to add Release later
+        build_type: [Release, Debug, QWER] # Better to add Release later

@@ -4,12 +4,16 @@
 
 #include <gtest/gtest.h>
 
-#include <rapic/rest_api_client.hpp>
+#include <rapic/http_rest_client.hpp>
+#include <rapic/thread_pool_context.hpp>
 
 TEST(ClientTest, BaseRequestExecution) {
-    rapic::RestApiClient client;
+    rapic::ThreadPoolContext context;
 
-    client.execute(rapic::Request{});
+    rapic::HttpRestClient client{context, ""};
+
+    client.SendRequest(
+      rapic::Request{}, [](const rapic::Response&) {}, std::chrono::milliseconds{10});
 
     EXPECT_TRUE(true);
 }

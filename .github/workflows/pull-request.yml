@@ -1,0 +1,23 @@
+name: pull-request
+run-name: ${{ github.base_ref }} build
+on: pull_request
+jobs:
+  build-and-run-tests:
+    name: ${{ matrix.config.name }} Build and Tests
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build project
+        uses: nicledomaS/cmake_build_action@v1.4
+        with:
+          submodule_update: ON
+          run_tests: ON
+          config: ${{ matrix.build_type }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        configs: [Release, Debug]

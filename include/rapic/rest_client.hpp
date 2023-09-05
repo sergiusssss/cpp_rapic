@@ -4,12 +4,15 @@
 
 #pragma once
 
-#include "Request.hpp"
-#include "Response.hpp"
-#include "execution_context.hpp"
-
-#include <functional>
 #include <chrono>
+#include <functional>
+#include <utility>
+
+#include <rapic/execution_context.hpp>
+#include <rapic/request.hpp>
+#include <rapic/response.hpp>
+
+namespace rapic {
 
 // Callback for handling the Response
 using RestClientCallback = std::function<void(const Response&)>;
@@ -17,25 +20,15 @@ using RestClientCallback = std::function<void(const Response&)>;
 // REST API client interface
 class RestClient {
 public:
-    // Accept an ExecutionContext upon construction
-    explicit RestClient(ExecutionContext& context, const std::string& base_url)
-        : context_(context), base_url_(base_url) {}
-
     virtual ~RestClient() = default;
 
-    // Send request
-    virtual void SendRequest(const Request& request, RestClientCallback callback,
-                                  std::chrono::milliseconds timeout) = 0;
+    virtual void SendRequest(const Request& request, RestClientCallback callback, std::chrono::milliseconds timeout) = 0;
 
-    // Get the base URL
-    const std::string& GetBaseUrl() const { return base_url_; }
+    [[nodiscard]] virtual const std::string& GetBaseUrl() const = 0;
 
-    // Set the base URL
-    void SetBaseUrl(const std::string& base_url) { base_url_ = base_url; }
+    virtual void SetBaseUrl(const std::string& base_url) = 0;
 
-    ExecutionContext& context() { return context_; }
-
-private:
-    ExecutionContext& context_;
-    std::string base_url_;
+    [[nodiscard]] virtual ExecutionContext& Context() = 0;
 };
+
+}  // namespace rapic

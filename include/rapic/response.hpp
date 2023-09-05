@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include <string>
 #include <map>
+#include <string>
+
+namespace rapic {
 
 // Response structure
 struct Response {
@@ -14,3 +16,5 @@ struct Response {
     std::map<std::string, std::string> headers;
     std::string body;
 };
+
+}  // namespace rapic

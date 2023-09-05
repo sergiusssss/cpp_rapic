@@ -8,7 +8,7 @@
 #include <rapic/thread_pool_context.hpp>
 
 TEST(ClientTest, BaseRequestExecution) {
-    rapic::ThreadPoolContext context;
+    rapic::ThreadPoolContext context{1};
 
     rapic::HttpRestClient client{context, ""};
 

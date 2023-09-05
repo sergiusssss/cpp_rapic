@@ -13,6 +13,8 @@ class Task;
 // ExecutionContext interface
 class ExecutionContext {
 public:
+    using Task = std::function<void()>;
+
     virtual ~ExecutionContext() = default;
     virtual void PostTask(std::unique_ptr<Task> task) = 0;
 };

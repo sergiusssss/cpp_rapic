@@ -45,4 +45,4 @@ jobs:
             os: windows-latest,
             cmake_args: -T ClangCl,
           }
-        build_type: [Release, Debug, QWER] # Better to add Release later
+        build_type: [Release, Debug] # Better to add Release later

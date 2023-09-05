@@ -15,7 +15,7 @@ jobs:
         working-directory: ./build
         run: |
           cmake ${{ matrix.configs.cmake_args }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
-          cmake --build --config  ${{ matrix.build_type }} .
+          cmake --build . --config ${{ matrix.build_type }}
       - name: Run tests
         working-directory: ./build
         run: |

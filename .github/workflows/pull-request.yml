@@ -3,8 +3,8 @@ run-name: ${{ github.base_ref }} branch verification
 on: pull_request
 jobs:
   build-and-run-tests:
-    name: ${{ matrix.config.name }} Build and Run tests
-    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.os }}:${{ matrix.configs }} Build and Run tests
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -14,10 +14,10 @@ jobs:
         with:
           submodule_update: ON
           run_tests: ON
-          config: ${{ matrix.build_type }}
+          config: ${{ matrix.config }}
 
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        configs: [Release, Debug]
+        config: [Release, Debug]

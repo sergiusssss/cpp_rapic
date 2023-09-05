@@ -14,8 +14,8 @@ jobs:
       - name: Build
         working-directory: ./build
         run: |
-          cmake .. ${{ matrix.configs.cmake_args }} ${{ matrix.configs.build_type_argument_name }} ${{ matrix.build_type }}
-          cmake --build .
+          cmake ${{ matrix.configs.cmake_args }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+          cmake --build --config  ${{ matrix.build_type }} .
       - name: Run tests
         working-directory: ./build
         run: |
@@ -29,23 +29,19 @@ jobs:
             name: Ubuntu clang,
             os: ubuntu-latest,
             cmake_args: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++,
-            build_type_argument_name: -DCMAKE_BUILD_TYPE=,
           }
           - {
             name: Ubuntu gcc,
             os: ubuntu-latest,
             cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
-            build_type_argument_name: -DCMAKE_BUILD_TYPE=,
           }
           - {
             name: Windows MSVC,
             os: windows-latest,
-            build_type_argument_name: --config ,
           }
           - {
             name: Windows clang,
             os: windows-latest,
             cmake_args: -T ClangCl,
-            build_type_argument_name: --config ,
           }
         build_type: [Release, Debug] # Better to add Release later

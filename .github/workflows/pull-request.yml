@@ -13,9 +13,10 @@ jobs:
         run: |
           mkdir build
           cd build
-      - name: Move to folder
+      - name: Build
         run: |
           cd build
+          cmake .. -DCMAKE_C_COMPILER=${{ matrix.configs.CC }} -CMAKE_CXX_COMPILER=${{ matrix.configs.CXX }}
       - name: LS folder
         run: |
           ls
@@ -27,25 +28,25 @@ jobs:
           - {
             name: Ubuntu clang,
             os: ubuntu-latest,
-            C: clang,
+            CC: clang,
             CXX: clang++
           }
           - {
             name: Ubuntu gcc,
             os: ubuntu-latest,
-            C: gcc,
+            CC: gcc,
             CXX: g++
           }
           - {
-            name: Windows MCVS,
+            name: Windows MSVC,
             os: windows-latest,
-            C: gcc,
+            CC: gcc,
             CXX: g++
           }
           - {
             name: Windows clang,
             os: windows-latest,
-            C: gcc,
-            CXX: g++
+            CC: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe,
+            CXX: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe
           }
         build_type: [Debug] # Better to add Release later

@@ -16,7 +16,7 @@ jobs:
       - name: Build
         run: |
           cd build
-          cmake .. -DCMAKE_C_COMPILER=${{ matrix.configs.CC }} -CMAKE_CXX_COMPILER=${{ matrix.configs.CXX }}
+          cmake .. -DCMAKE_C_COMPILER=${{ matrix.configs.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.configs.CXX }}
       - name: LS folder
         run: |
           ls

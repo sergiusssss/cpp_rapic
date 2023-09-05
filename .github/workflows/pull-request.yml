@@ -46,7 +46,7 @@ jobs:
           - {
             name: Windows clang,
             os: windows-latest,
-            CC: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe,
-            CXX: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe
+            CC: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe",
+            CXX: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe"
           }
         build_type: [Debug] # Better to add Release later

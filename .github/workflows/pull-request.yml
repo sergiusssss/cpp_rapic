@@ -10,17 +10,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create build folder
-        run: |
-          mkdir build
-          cd build
+        run: mkdir build
       - name: Build
+        working-directory: ./build
         run: |
-          cd build
-          cmake .. -DCMAKE_C_COMPILER=${{ matrix.configs.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.configs.CXX }}
+          cmake .. ${{ matrix.configs.cmake_args }}
           cmake --build .
       - name: Run tests
+        working-directory: ./build
         run: |
-          cd build
+          ls 
           ctest
 
     strategy:
@@ -30,25 +29,20 @@ jobs:
           - {
             name: Ubuntu clang,
             os: ubuntu-latest,
-            CC: clang,
-            CXX: clang++
+            cmake_args: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++,
           }
           - {
             name: Ubuntu gcc,
             os: ubuntu-latest,
-            CC: gcc,
-            CXX: g++
+            cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
           }
           - {
             name: Windows MSVC,
             os: windows-latest,
-            CC: gcc,
-            CXX: g++
           }
           - {
             name: Windows clang,
             os: windows-latest,
-            CC: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/bin/clang-cl.exe",
-            CXX: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/bin/clang-cl.exe"
+            cmake_args: -T"LLVM-vs2017",
           }
         build_type: [Debug] # Better to add Release later

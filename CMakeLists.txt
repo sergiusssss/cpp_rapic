@@ -16,7 +16,6 @@ add_library(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 if (${ENABLE_TESTS})
-    message(STATUS "Tests enabled")
     enable_testing()
 endif()
 

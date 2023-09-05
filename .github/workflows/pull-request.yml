@@ -3,27 +3,49 @@ run-name: ${{ github.base_ref }} branch verification
 on: pull_request
 jobs:
   build-and-run-tests:
-    name: ${{ matrix.os }}:${{ matrix.config }} Build and Run tests
+    name: ${{ matrix.configs.name }} (${{ matrix.build_type }}) Build and Run tests
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Test cmake
-        run: cmake --version
-      - name: Test gcc
-        run: gcc --version
-      - name: Test clang
-        run: clang --version
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build project
-        uses: nicledomaS/cmake_build_action@v1.4
-        with:
-          submodule_update: ON
-          run_tests: ON
-          config: ${{ matrix.config }}
+      - name: Create build folder
+        run: |
+          mkdri build
+          cd build
+      - name: Move to folder
+        run: |
+          cd build
+      - name: LS folder
+        run: |
+          ls
 
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        config: [Release, Debug]
+        configs: # Better to add os:macos-latest later
+          - {
+            name: Ubuntu clang,
+            os: ubuntu-latest,
+            C: clang,
+            CXX: clang++
+          }
+          - {
+            name: Ubuntu gcc,
+            os: ubuntu-latest,
+            C: gcc,
+            CXX: g++
+          }
+          - {
+            name: Windows MCVS,
+            os: windows-latest,
+            C: gcc,
+            CXX: g++
+          }
+          - {
+            name: Windows clang,
+            os: windows-latest,
+            C: gcc,
+            CXX: g++
+          }
+        build_type: [Debug] # Better to add Release later

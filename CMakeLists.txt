@@ -16,7 +16,7 @@ set(SOURCE_FILES
 
 FetchContent_Declare(
         spdlog
-        GIT_REPOSITORY git@github.com:gabime/spdlog.git
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG 7e635fca68d014934b4af8a1cf874f63989352b7 # v1.12.0
 )
 FetchContent_MakeAvailable(spdlog)

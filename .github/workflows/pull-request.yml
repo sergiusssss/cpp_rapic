@@ -1,4 +1,4 @@
-name: PR
+name: PR verification
 run-name: PR verification - ${{ github.event.pull_request.title }}
 on: pull_request
 jobs:

@@ -3,10 +3,16 @@ run-name: ${{ github.base_ref }} branch verification
 on: pull_request
 jobs:
   build-and-run-tests:
-    name: ${{ matrix.os }}:${{ matrix.configs }} Build and Run tests
+    name: ${{ matrix.os }}:${{ matrix.config }} Build and Run tests
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Test cmake
+        run: cmake --version
+      - name: Test gcc
+        run: gcc --version
+      - name: Test clang
+        run: clang --version
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build project

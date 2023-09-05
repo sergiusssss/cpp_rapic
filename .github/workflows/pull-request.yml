@@ -4,7 +4,7 @@ on: pull_request
 jobs:
   build-and-run-tests:
     name: ${{ matrix.configs.name }} (${{ matrix.build_type }}) Build and Run tests
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.configs.os }}
 
     steps:
       - name: Checkout

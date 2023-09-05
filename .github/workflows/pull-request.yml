@@ -17,12 +17,14 @@ jobs:
         run: |
           cd build
           cmake .. -DCMAKE_C_COMPILER=${{ matrix.configs.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.configs.CXX }}
-      - name: LS folder
+          cmake --build .
+      - name: Run tests
         run: |
-          ls
+          cd build
+          ctest
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         configs: # Better to add os:macos-latest later
           - {

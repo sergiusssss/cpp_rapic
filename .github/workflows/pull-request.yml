@@ -1,5 +1,5 @@
 name: PR
-run-name: "${{ github.event.pull_request.title }}" pull request verification
+run-name: ${{ github.event.pull_request.title }} pull request verification
 on: pull_request
 jobs:
   build-and-run-tests:

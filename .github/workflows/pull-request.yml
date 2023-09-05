@@ -1,23 +1,48 @@
-name: pull-request
-run-name: ${{ github.base_ref }} build
+name: PR
+run-name: PR verification - ${{ github.event.pull_request.title }}
 on: pull_request
 jobs:
   build-and-run-tests:
-    name: ${{ matrix.config.name }} Build and Tests
-    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.configs.name }} (${{ matrix.build_type }}) Build and Run tests
+    runs-on: ${{ matrix.configs.os }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build project
-        uses: nicledomaS/cmake_build_action@v1.4
-        with:
-          submodule_update: ON
-          run_tests: ON
-          config: ${{ matrix.build_type }}
+      - name: Create build folder
+        run: mkdir build
+      - name: Configuration
+        working-directory: ./build
+        run: cmake ${{ matrix.configs.cmake_args }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+      - name: Build
+        working-directory: ./build
+        run: cmake --build . --config ${{ matrix.build_type }}
+      - name: Run tests
+        working-directory: ./build
+        run: |
+          ctest
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        configs: [Release, Debug]
+        configs: # Better to add os:macos-latest later
+          - {
+            name: Ubuntu clang,
+            os: ubuntu-latest,
+            cmake_args: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++,
+          }
+          - {
+            name: Ubuntu gcc,
+            os: ubuntu-latest,
+            cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
+          }
+          - {
+            name: Windows MSVC,
+            os: windows-latest,
+          }
+          - {
+            name: Windows clang,
+            os: windows-latest,
+            cmake_args: -T ClangCl,
+          }
+        build_type: [Release, Debug] # Better to add Release later

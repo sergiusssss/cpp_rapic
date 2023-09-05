@@ -1,9 +1,9 @@
-name: pull-request
-run-name: ${{ github.base_ref }} build
+name: PR
+run-name: ${{ github.base_ref }} branch verification
 on: pull_request
 jobs:
   build-and-run-tests:
-    name: ${{ matrix.config.name }} Build and Tests
+    name: ${{ matrix.config.name }} Build and Run tests
     runs-on: ${{ matrix.config.os }}
 
     steps:

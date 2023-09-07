@@ -48,7 +48,9 @@ TEST_P(ThreadPoolContextTest, RunningFlagTest) {
 TEST_P(ThreadPoolContextTest, LoadedExecution) {
     std::atomic<std::uint32_t> executions = 0;
 
-    for (std::uint32_t i = 0; i < GetParam(); ++i) {
+    constexpr std::uint32_t kNumberOfTasks = 1024;
+
+    for (std::uint32_t i = 0; i < kNumberOfTasks; ++i) {
         auto task = [&]() { ++executions; };
         context_.PostTask(std::make_unique<std::function<void()>>(task));
     }
@@ -57,7 +59,31 @@ TEST_P(ThreadPoolContextTest, LoadedExecution) {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    EXPECT_EQ(executions, GetParam());
+    EXPECT_EQ(executions, kNumberOfTasks);
 }
 
-INSTANTIATE_TEST_SUITE_P(NumberOfThreads, ThreadPoolContextTest, testing::Values(1, 2, 8, 1024));
+TEST_P(ThreadPoolContextTest, DifferentThreads) {
+    const auto kNumberOfTasks = 4 * GetParam();
+
+    std::set<std::thread::id> thread_ids;
+    std::mutex thread_id_mutex;
+
+    for (std::uint32_t i = 0; i < kNumberOfTasks; ++i) {
+        auto task = [&]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+            std::lock_guard<std::mutex> lock(thread_id_mutex);
+            thread_ids.insert(std::this_thread::get_id());
+        };
+        context_.PostTask(std::make_unique<std::function<void()>>(task));
+    }
+
+    context_.Start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100 + (kNumberOfTasks * (5 + 5) / GetParam())));
+
+    EXPECT_FALSE(thread_ids.empty());
+    EXPECT_EQ(thread_ids.size(), GetParam());
+}
+
+INSTANTIATE_TEST_SUITE_P(NumberOfThreads, ThreadPoolContextTest, testing::Values(2, 8, 1024));

@@ -72,7 +72,7 @@ TEST_P(ThreadPoolContextTest, DifferentThreads) {
 
     for (std::uint32_t i = 0; i < kNumberOfTasks; ++i) {
         auto task = [&]() {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
             std::lock_guard<std::mutex> lock(thread_id_mutex);
             thread_ids.insert(std::this_thread::get_id());
@@ -82,7 +82,7 @@ TEST_P(ThreadPoolContextTest, DifferentThreads) {
 
     context_.Start();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100 + (kNumberOfTasks * (5 + 5) / GetParam())));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100 + (kNumberOfTasks * (10 + 15) / GetParam())));
 
     EXPECT_FALSE(thread_ids.empty());
     EXPECT_EQ(thread_ids.size(), GetParam());

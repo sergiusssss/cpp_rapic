@@ -35,10 +35,11 @@ private:
     std::queue<std::unique_ptr<Task>> tasks_queue_;
     std::mutex tasks_queue_mutex_;
 
-    std::atomic<bool> running_flag_;
     std::vector<std::jthread> threads_;
-    std::mutex running_flag_mutex_;
-    std::condition_variable running_flag_cv_;
+    std::atomic<bool> running_flag_;
+
+    //std::mutex tasks_queue_mutex_;
+    std::condition_variable tasks_queue_cv_;
 };
 
 }  // namespace rapic

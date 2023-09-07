@@ -10,8 +10,6 @@
 
 namespace rapic {
 
-class Task {};
-
 ThreadPoolContext::Impl::Impl(std::uint32_t thread_number)
     : thread_number_(thread_number) {}
 
@@ -22,7 +20,7 @@ void ThreadPoolContext::Impl::PostTask(std::unique_ptr<Task> task) {
 
     tasks_queue_.push(std::move(task));
 
-    running_flag_cv_.notify_one();
+    tasks_queue_cv_.notify_one();
 }
 
 bool ThreadPoolContext::Impl::Start() {
@@ -43,7 +41,7 @@ bool ThreadPoolContext::Impl::Start() {
 
 bool ThreadPoolContext::Impl::Stop() {
     running_flag_.store(false);
-    running_flag_cv_.notify_all();
+    tasks_queue_cv_.notify_all();
 
     threads_.clear();
 
@@ -51,8 +49,6 @@ bool ThreadPoolContext::Impl::Stop() {
 
     decltype(tasks_queue_) empty_queue;
     tasks_queue_.swap(empty_queue);
-
-    running_flag_cv_.notify_all();
 
     return true;
 }
@@ -74,8 +70,10 @@ void ThreadPoolContext::Impl::ThreadLoop() {
             (*task)();
         }
 
-        std::unique_lock<std::mutex> lock(running_flag_mutex_);
-        running_flag_cv_.wait(lock, [&]() { return !running_flag_.load(); });
+        std::unique_lock<std::mutex> lock(tasks_queue_mutex_);
+        tasks_queue_cv_.wait(lock, [&]() {
+            return !(tasks_queue_.empty() && running_flag_.load());
+        });
     }
 }
 

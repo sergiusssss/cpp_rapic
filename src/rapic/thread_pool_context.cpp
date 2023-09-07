@@ -16,9 +16,9 @@ ThreadPoolContext::~ThreadPoolContext() = default;
 
 void ThreadPoolContext::PostTask(std::unique_ptr<Task> task) { impl_->PostTask(std::move(task)); }
 
-void ThreadPoolContext::Start() { impl_->Start(); }
+bool ThreadPoolContext::Start() { return impl_->Start(); }
 
-void ThreadPoolContext::Stop() { impl_->Stop(); }
+bool ThreadPoolContext::Stop() { return impl_->Stop(); }
 
 bool ThreadPoolContext::IsRunning() { return impl_->IsRunning(); }
 

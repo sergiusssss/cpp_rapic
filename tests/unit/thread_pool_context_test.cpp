@@ -6,17 +6,58 @@
 
 #include <rapic/thread_pool_context.hpp>
 
-TEST(ThreadPoolContextTest, BaseTaskExecution) {
-    rapic::ThreadPoolContext context{1};
+class ThreadPoolContextTest : public testing::TestWithParam<std::uint16_t> {
+public:
+    ThreadPoolContextTest()
+        : context_(GetParam()) {}
 
+protected:
+    rapic::ThreadPoolContext context_;
+};
+
+TEST_P(ThreadPoolContextTest, BaseTaskExecution) {
     bool executed = false;
     auto task = [&]() { executed = true; };
 
-    context.PostTask(std::make_unique<std::function<void()>>(task));
+    context_.PostTask(std::make_unique<std::function<void()>>(task));
 
-    context.Start();
+    context_.Start();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     EXPECT_TRUE(executed);
+
+    context_.Stop();
 }
+
+TEST_P(ThreadPoolContextTest, StartStopTest) {
+    ASSERT_TRUE(context_.Start());
+    ASSERT_FALSE(context_.Start());
+    ASSERT_TRUE(context_.Stop());
+    ASSERT_TRUE(context_.Start());
+}
+
+TEST_P(ThreadPoolContextTest, RunningFlagTest) {
+    ASSERT_FALSE(context_.IsRunning());
+    context_.Start();
+    ASSERT_TRUE(context_.IsRunning());
+    context_.Stop();
+    ASSERT_FALSE(context_.IsRunning());
+}
+
+TEST_P(ThreadPoolContextTest, LoadedExecution) {
+    std::atomic<std::uint32_t> executions = 0;
+
+    for (std::uint32_t i = 0; i < GetParam(); ++i) {
+        auto task = [&]() { ++executions; };
+        context_.PostTask(std::make_unique<std::function<void()>>(task));
+    }
+
+    context_.Start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    EXPECT_EQ(executions, GetParam());
+}
+
+INSTANTIATE_TEST_SUITE_P(NumberOfThreads, ThreadPoolContextTest, testing::Values(1, 2, 8, 1024));

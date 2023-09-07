@@ -19,8 +19,8 @@ public:
     /// ExecutionContext interface
     void PostTask(std::unique_ptr<Task> task) override;
 
-    void Start();
-    void Stop();
+    bool Start();
+    bool Stop();
     bool IsRunning();
 
 private:

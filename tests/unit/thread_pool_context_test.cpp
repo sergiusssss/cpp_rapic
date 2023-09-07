@@ -2,6 +2,8 @@
 // Created by sergi on 9/5/2023.
 //
 
+#include <thread>
+
 #include <gtest/gtest.h>
 
 #include <rapic/thread_pool_context.hpp>

@@ -71,7 +71,7 @@ FetchContent_Declare(
 #add_dependencies(OpenSSL::Crypto OpenSSL)
 
 # Fetching of all required libraries if it's enabled.
-set(OPENSSL_USE_STATIC_LIBS TRUE)
+#set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)
 set(EXTERNAL_LIBRARIES OpenSSL::SSL OpenSSL::Crypto)
 message(STATUS ${OPENSSL_INCLUDE_DIR})

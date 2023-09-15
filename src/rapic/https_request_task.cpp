@@ -120,6 +120,8 @@ void HttpsRequest(const std::string& base_url, const Request& request, const Res
     // The SSL context is required, and holds certificates
     ssl::context ctx(ssl::context::tlsv12_client);
 
+    spdlog::error("1.2");
+
     // This holds the root certificate used for verification
     load_root_certificates(ctx);
 

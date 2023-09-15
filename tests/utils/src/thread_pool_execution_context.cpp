@@ -2,20 +2,16 @@
 // Created by sergi on 8/26/2023.
 //
 
-#include "thread_pool_context_impl.hpp"
+#include <rapic/tests/utils/thread_pool_execution_context.hpp>
 
-#include <spdlog/spdlog.h>
+namespace rapic::tests::utils {
 
-#include <rapic/thread_pool_context.hpp>
-
-namespace rapic {
-
-ThreadPoolContext::Impl::Impl(std::uint32_t thread_number)
+ThreadPoolExecutionContext::ThreadPoolExecutionContext(std::uint32_t thread_number)
     : thread_number_(thread_number) {}
 
-ThreadPoolContext::Impl::~Impl() { Stop(); }
+ThreadPoolExecutionContext::~ThreadPoolExecutionContext() { Stop(); }
 
-void ThreadPoolContext::Impl::PostTask(std::unique_ptr<Task> task) {
+void ThreadPoolExecutionContext::PostTask(std::packaged_task<void(void)> task) {
     std::lock_guard<std::mutex> lock(tasks_queue_mutex_);
 
     tasks_queue_.push(std::move(task));
@@ -23,9 +19,8 @@ void ThreadPoolContext::Impl::PostTask(std::unique_ptr<Task> task) {
     tasks_queue_cv_.notify_one();
 }
 
-bool ThreadPoolContext::Impl::Start() {
+bool ThreadPoolExecutionContext::Start() {
     if (!threads_.empty()) {
-        spdlog::error("ThreadPool isn't stopped correctly.");
         return false;
     }
 
@@ -33,13 +28,13 @@ bool ThreadPoolContext::Impl::Start() {
 
     threads_.reserve(thread_number_);
     for (std::size_t i = 0; i < thread_number_; ++i) {
-        threads_.emplace_back(&ThreadPoolContext::Impl::ThreadLoop, this);
+        threads_.emplace_back(&ThreadPoolExecutionContext::ThreadLoop, this);
     }
 
     return true;
 }
 
-bool ThreadPoolContext::Impl::Stop() {
+bool ThreadPoolExecutionContext::Stop() {
     running_flag_.store(false);
     tasks_queue_cv_.notify_all();
 
@@ -53,11 +48,11 @@ bool ThreadPoolContext::Impl::Stop() {
     return true;
 }
 
-bool ThreadPoolContext::Impl::IsRunning() { return running_flag_.load(); }
+bool ThreadPoolExecutionContext::IsRunning() { return running_flag_.load(); }
 
-void ThreadPoolContext::Impl::ThreadLoop() {
+void ThreadPoolExecutionContext::ThreadLoop() {
     while (running_flag_.load()) {
-        std::unique_ptr<Task> task;
+        std::packaged_task<void(void)> task;
         {
             std::lock_guard<std::mutex> queue_lock(tasks_queue_mutex_);
             if (!tasks_queue_.empty()) {
@@ -66,15 +61,13 @@ void ThreadPoolContext::Impl::ThreadLoop() {
             }
         }
 
-        if (task) {
-            (*task)();
+        if (task.valid()) {
+            task();
         }
 
         std::unique_lock<std::mutex> lock(tasks_queue_mutex_);
-        tasks_queue_cv_.wait(lock, [&]() {
-            return !(tasks_queue_.empty() && running_flag_.load());
-        });
+        tasks_queue_cv_.wait(lock, [&]() { return !(tasks_queue_.empty() && running_flag_.load()); });
     }
 }
 
-}  // namespace rapic
+}  // namespace rapic::tests::utils

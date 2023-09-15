@@ -2,22 +2,55 @@
 // Created by sergi on 9/5/2023.
 //
 
+#include <deque>
+#include <future>
 #include <thread>
 
 #include <gtest/gtest.h>
 
-#include <rapic/thread_pool_context.hpp>
+#include <rapic/thread_pool_execution_context.hpp>
 
-class ThreadPoolContextTest : public testing::TestWithParam<std::uint16_t> {
+class ThreadPoolExecutionContextTest : public testing::TestWithParam<std::uint16_t> {
 public:
-    ThreadPoolContextTest()
+    ThreadPoolExecutionContextTest()
         : context_(GetParam()) {}
 
 protected:
-    rapic::ThreadPoolContext context_;
+    rapic::ThreadPoolExecutionContext context_;
 };
 
-TEST_P(ThreadPoolContextTest, BaseTaskExecution) {
+TEST_P(ThreadPoolExecutionContextTest, TEST) {
+    std::deque<std::packaged_task<int(void)>> deque;
+
+    std::packaged_task<int(void)> t1([]() {return 1;});
+    std::packaged_task<int(void)> t2([]() {return 2;});
+    std::packaged_task<int(void)> t3([]() {return 3;});
+
+    auto f1 = t1.get_future();
+    auto f2 = t2.get_future();
+    auto f3 = t3.get_future();
+
+    deque.push_back(std::move(t1));
+    deque.push_back(std::move(t2));
+    deque.push_back(std::move(t3));
+
+    auto t1c = std::move(deque.front());
+    deque.pop_front();
+    auto t2c = std::move(deque.front());
+    deque.pop_front();
+    auto t3c = std::move(deque.front());
+    deque.pop_front();
+
+    t1c();
+    t2c();
+    t3c();
+
+    EXPECT_EQ(f1.get(), 1);
+    EXPECT_EQ(f2.get(), 2);
+    EXPECT_EQ(f3.get(), 3);
+}
+
+TEST_P(ThreadPoolExecutionContextTest, BaseTaskExecution) {
     bool executed = false;
     auto task = [&]() { executed = true; };
 
@@ -32,14 +65,14 @@ TEST_P(ThreadPoolContextTest, BaseTaskExecution) {
     context_.Stop();
 }
 
-TEST_P(ThreadPoolContextTest, StartStopTest) {
+TEST_P(ThreadPoolExecutionContextTest, StartStopTest) {
     ASSERT_TRUE(context_.Start());
     ASSERT_FALSE(context_.Start());
     ASSERT_TRUE(context_.Stop());
     ASSERT_TRUE(context_.Start());
 }
 
-TEST_P(ThreadPoolContextTest, RunningFlagTest) {
+TEST_P(ThreadPoolExecutionContextTest, RunningFlagTest) {
     ASSERT_FALSE(context_.IsRunning());
     context_.Start();
     ASSERT_TRUE(context_.IsRunning());
@@ -47,7 +80,7 @@ TEST_P(ThreadPoolContextTest, RunningFlagTest) {
     ASSERT_FALSE(context_.IsRunning());
 }
 
-TEST_P(ThreadPoolContextTest, LoadedExecution) {
+TEST_P(ThreadPoolExecutionContextTest, LoadedExecution) {
     std::atomic<std::uint32_t> executions = 0;
 
     constexpr std::uint32_t kNumberOfTasks = 1024;
@@ -64,7 +97,7 @@ TEST_P(ThreadPoolContextTest, LoadedExecution) {
     EXPECT_EQ(executions, kNumberOfTasks);
 }
 
-TEST_P(ThreadPoolContextTest, DifferentThreads) {
+TEST_P(ThreadPoolExecutionContextTest, DifferentThreads) {
     const auto kNumberOfTasks = 4 * GetParam();
 
     std::set<std::thread::id> thread_ids;
@@ -88,4 +121,4 @@ TEST_P(ThreadPoolContextTest, DifferentThreads) {
     EXPECT_EQ(thread_ids.size(), GetParam());
 }
 
-INSTANTIATE_TEST_SUITE_P(NumberOfThreads, ThreadPoolContextTest, testing::Values(2, 8, 1024));
+INSTANTIATE_TEST_SUITE_P(NumberOfThreads, ThreadPoolExecutionContextTest, testing::Values(2, 8, 1024));

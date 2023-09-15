@@ -8,11 +8,11 @@
 
 namespace rapic {
 
-class HttpRestClient : public RestClient {
+class HttpsRestClient : public RestClient {
 public:
     // Accept an ExecutionContext upon construction
-    explicit HttpRestClient(std::string base_url, ExecutionContext& context);
-    ~HttpRestClient() override;
+    explicit HttpsRestClient(std::string base_url, ExecutionContext& context);
+    ~HttpsRestClient() override;
 
     // Send request
     void SendRequest(const Request& request, Callback callback, std::chrono::milliseconds timeout) override;

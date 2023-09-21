@@ -2,6 +2,8 @@
 // Created by sergi on 8/26/2023.
 //
 
+#include <isotream>
+
 #include <gtest/gtest.h>
 
 #include <rapic/https_rest_client.hpp>

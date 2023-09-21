@@ -43,6 +43,6 @@ jobs:
           - {
             name: Windows clang,
             os: windows-latest,
-            cmake_args: "-T ClangCl -DOPENSSL_ROOT_DIR=C\:\\msys2\\msys64\\mingw32 -DOPENSSL_CRYPTO_LIBRARY=C\:\\msys2\\msys64\\mingw32\\lib\\libssl.a -DOPENSSL_INCLUDE_DIR=C\:\\msys2\\msys64\\mingw32\\include -DOPENSSL_VERSION=1.1.1m",
+            cmake_args: -T ClangCl -DOPENSSL_ROOT_DIR=C\:\\msys2\\msys64\\mingw32 -DOPENSSL_CRYPTO_LIBRARY=C\:\\msys2\\msys64\\mingw32\\lib\\libssl.a -DOPENSSL_INCLUDE_DIR=C\:\\msys2\\msys64\\mingw32\\include -DOPENSSL_VERSION=1.1.1m,
           }
         build_type: [Release] # Better to add Release later

@@ -13,7 +13,6 @@
 #include <boost/beast/version.hpp>
 
 #include <iostream>
-#include <tracy/Tracy.hpp>
 
 namespace rapic {
 
@@ -23,8 +22,6 @@ void HttpRequest(const std::string& base_url, const Request& request, const Rest
     using tcp = boost::asio::ip::tcp;
     namespace http = boost::beast::http;
     namespace beast = boost::beast;
-
-    ZoneScopedN("HttpRequest");
 
     std::stringstream ss;
     ss << std::this_thread::get_id();
@@ -104,7 +101,6 @@ void HttpRequest(const std::string& base_url, const Request& request, const Rest
     // shutdown
     stream.socket().shutdown(tcp::socket::shutdown_both);
     {
-        ZoneScopedN("Callback execution");
         callback(response);
     }
 

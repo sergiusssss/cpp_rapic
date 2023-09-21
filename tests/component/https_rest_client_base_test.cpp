@@ -59,7 +59,7 @@ TEST_P(HttpsRestClientReqResUrlTest, BaseRequestExecution) {
 
     const auto response = response_future.get();
     EXPECT_EQ(response.status_code, 200);
-    EXPECT_EQ(response.status_message, "");
+    EXPECT_EQ(response.status_message, "OK");
 }
 
 INSTANTIATE_TEST_SUITE_P(ExecutionContexts, HttpsRestClientEmptyUrlTest,

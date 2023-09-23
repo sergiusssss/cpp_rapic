@@ -25,23 +25,24 @@ jobs:
       fail-fast: false
       matrix:
         configs: # Better to add os:macos-latest later
-#          - {
-#            name: Ubuntu clang,
-#            os: ubuntu-latest,
-#            cmake_args: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++,
-#          }
-#          - {
-#            name: Ubuntu gcc,
-#            os: ubuntu-latest,
-#            cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
-#          }
           - {
-            name: Windows MSVC,
-            os: windows-latest,
+            name: Ubuntu clang,
+            os: ubuntu-latest,
+            cmake_args: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++,
           }
-#          - {
-#            name: Windows clang,
-#            os: windows-latest,
-#            cmake_args: "-T ClangCl -DOPENSSL_ROOT_DIR=C:\\msys2\\msys64\\mingw32 -DOPENSSL_CRYPTO_LIBRARY=C:\\msys2\\msys64\\mingw32\\lib\\libssl.a -DOPENSSL_INCLUDE_DIR=C:\\msys2\\msys64\\mingw32\\include",
-#          }
+          - {
+            name: Ubuntu gcc,
+            os: ubuntu-latest,
+            cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
+          }
+          # Uncomment when https://github.com/actions/runner-images/issues/8344 will be solved
+          #- {
+          #  name: Windows MSVC,
+          #  os: windows-latest,
+          #}
+          #- {
+          #  name: Windows clang,
+          #  os: windows-latest,
+          #  cmake_args: -T ClangCl,
+          #}
         build_type: [Release] # Better to add Release later

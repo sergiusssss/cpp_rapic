@@ -22,7 +22,7 @@ enum class HttpMethod { kGet, kPost, kPut, kDelete };
 
 struct Request {
     HttpMethod method;
-    std::string url;
+    std::string path;
     std::map<std::string, std::string> headers;
     std::string body;
 };

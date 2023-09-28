@@ -8,19 +8,17 @@
 
 namespace rapic {
 
-HttpsRestClient::HttpsRestClient(std::string base_url, rapic::ExecutionContext& context)
-    : impl_(std::make_unique<Impl>(std::move(base_url), context)) {}
+HttpsRestClient::Configuration::Configuration(const std::string& address, const std::string& service)
+    : address(address)
+    , service(service) {}
+
+HttpsRestClient::HttpsRestClient(const Configuration& configuration, rapic::ExecutionContext& context)
+    : impl_(std::make_unique<Impl>(configuration, context)) {}
 
 HttpsRestClient::~HttpsRestClient() = default;
 
-void HttpsRestClient::SendRequest(const Request& request, Callback callback, std::chrono::milliseconds timeout) {
-    impl_->SendRequest(request, callback, timeout);
+void HttpsRestClient::SendRequest(const Request& request, Callback callback) {
+    impl_->SendRequest(request, callback);
 }
-
-const std::string& HttpsRestClient::GetBaseUrl() const { return impl_->GetBaseUrl(); }
-
-void HttpsRestClient::SetBaseUrl(const std::string& base_url) { impl_->SetBaseUrl(base_url); }
-
-ExecutionContext& HttpsRestClient::Context() { return impl_->Context(); }
 
 }  // namespace rapic

@@ -6,28 +6,36 @@
 
 #include <rapic/https_rest_client.hpp>
 
+#include <boost/asio/ssl.hpp>
+
+#include "logger.hpp"
+#include "request_task_producer.hpp"
+
 namespace rapic {
 
-class HttpsRestClient::Impl {
+class HttpsRestClient::Impl : RequestTaskProducer {
 public:
     // Accept an ExecutionContext upon construction
-    explicit Impl(std::string base_url, ExecutionContext& context);
-    ~Impl();
+    explicit Impl(HttpsRestClient::Configuration configuration, ExecutionContext& context);
+    ~Impl() override = default;
 
     // Send request
-    void SendRequest(const Request& request, Callback callback, std::chrono::milliseconds timeout);
+    void SendRequest(const Request& request, const Callback& callback);
 
-    // Get the base URL
-    [[nodiscard]] const std::string& GetBaseUrl() const { return base_url_; }
+private:
+    const std::string& GetAddress() override;
 
-    // Set the base URL
-    void SetBaseUrl(const std::string& base_url) { base_url_ = base_url; }
+    const std::string& GetService() override;
 
-    [[nodiscard]] ExecutionContext& Context() { return context_; }
+    std::unique_ptr<rapic::Stream>
+    Connect(const boost::asio::ip::basic_resolver<boost::asio::ip::tcp, boost::asio::any_io_executor>::results_type& end_points) override;
 
 private:
     ExecutionContext& context_;
-    std::string base_url_;
+    HttpsRestClient::Configuration configuration_;
+
+    boost::asio::io_context io_context_;
+    boost::asio::ssl::context ssl_context_;
 };
 
 }  // namespace rapic

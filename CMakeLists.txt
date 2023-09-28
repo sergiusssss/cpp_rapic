@@ -71,13 +71,14 @@ endif ()
 
 # Library source files
 set(SOURCE_FILES
-        # src/rapic/boost_impl.cpp Add BOOST_ASIO_SEPARATE_COMPILATION
-        src/rapic/http_rest_client.cpp
-        src/rapic/http_request_task.cpp
-        src/rapic/http_rest_client_impl.cpp
+        #src/rapic/http_rest_client.cpp
+        #src/rapic/http_rest_client_impl.cpp
         src/rapic/https_rest_client.cpp
-        src/rapic/https_request_task.cpp
         src/rapic/https_rest_client_impl.cpp
+        src/rapic/request_task_producer.cpp
+        src/rapic/ssl_stream.cpp
+        src/rapic/tcp_stream.cpp
+        src/rapic/logger.cpp
 )
 
 # Creating library
@@ -89,5 +90,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTERNAL_LIBRARIES})
 
 # Add tests subdirectory only if tests enabled
 if (${ENABLE_TESTS})
+    add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
     add_subdirectory(tests)
 endif ()

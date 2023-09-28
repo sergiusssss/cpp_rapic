@@ -13,13 +13,9 @@ HttpRestClient::HttpRestClient(std::string base_url, rapic::ExecutionContext& co
 
 HttpRestClient::~HttpRestClient() = default;
 
-void HttpRestClient::SendRequest(const Request& request, Callback callback, std::chrono::milliseconds timeout) {
-    impl_->SendRequest(request, callback, timeout);
-}
+void HttpRestClient::SendRequest(const Request& request, Callback callback) { impl_->SendRequest(request, callback); }
 
-const std::string& HttpRestClient::GetBaseUrl() const { return impl_->GetBaseUrl(); }
-
-void HttpRestClient::SetBaseUrl(const std::string& base_url) { impl_->SetBaseUrl(base_url); }
+const std::string& HttpRestClient::GetAddress() const { return impl_->GetAddress(); }
 
 ExecutionContext& HttpRestClient::Context() { return impl_->Context(); }
 

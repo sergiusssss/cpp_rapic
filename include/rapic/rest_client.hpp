@@ -22,13 +22,7 @@ public:
 
     virtual ~RestClient() = default;
 
-    virtual void SendRequest(const Request& request, Callback callback, std::chrono::milliseconds timeout) = 0;
-
-    [[nodiscard]] virtual const std::string& GetBaseUrl() const = 0;
-
-    virtual void SetBaseUrl(const std::string& base_url) = 0;
-
-    [[nodiscard]] virtual ExecutionContext& Context() = 0;
+    virtual void SendRequest(const Request& request, Callback callback) = 0;
 };
 
 }  // namespace rapic

@@ -14,8 +14,8 @@ HttpRestClient::Impl::Impl(std::string base_url, ExecutionContext& context)
 
 HttpRestClient::Impl::~Impl() = default;
 
-void HttpRestClient::Impl::SendRequest(const Request& request, RestClient::Callback callback, std::chrono::milliseconds timeout) {
-    context_.PostTask(CreateHttpRequestTask(base_url_, request, callback, timeout));
+void HttpRestClient::Impl::SendRequest(const Request& request, RestClient::Callback callback) {
+    context_.PostTask(CreateHttpRequestTask(base_url_, request, callback));
 }
 
 }  // namespace rapic

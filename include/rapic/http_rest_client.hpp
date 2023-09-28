@@ -10,20 +10,17 @@ namespace rapic {
 
 class HttpRestClient : public RestClient {
 public:
+    struct Configuration {
+        std::string address;
+        std::string service;
+    };
+
     // Accept an ExecutionContext upon construction
-    explicit HttpRestClient(std::string base_url, ExecutionContext& context);
+    explicit HttpRestClient(const Configuration& configuration, ExecutionContext& context);
     ~HttpRestClient() override;
 
     // Send request
-    void SendRequest(const Request& request, Callback callback, std::chrono::milliseconds timeout) override;
-
-    // Get the base URL
-    [[nodiscard]] const std::string& GetBaseUrl() const override;
-
-    // Set the base URL
-    void SetBaseUrl(const std::string& base_url) override;
-
-    [[nodiscard]] ExecutionContext& Context() override;
+    void SendRequest(const Request& request, Callback callback) override;
 
 private:
     class Impl;

@@ -22,7 +22,7 @@ public:
 
     virtual ~RestClient() = default;
 
-    virtual void SendRequest(const Request& request, Callback callback) = 0;
+    virtual void SendRequest(const Request& request, const Callback& callback) = 0;
 };
 
 }  // namespace rapic

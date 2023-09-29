@@ -4,17 +4,20 @@
 
 #pragma once
 
-#include "rapic/execution_context.hpp"
+#include "test_execution_context.hpp"
 
 namespace rapic::tests::utils {
 
-class SyncedExecutionContext : public ExecutionContext {
+class SyncedExecutionContext : public TestExecutionContext {
 public:
     explicit SyncedExecutionContext() = default;
     ~SyncedExecutionContext() override = default;
 
     /// ExecutionContext interface
     void PostTask(std::packaged_task<void(void)> task) override;
+
+    /// TestExecutionContext interface
+    std::string GetName() override;
 };
 
 }  // namespace rapic::tests::utils

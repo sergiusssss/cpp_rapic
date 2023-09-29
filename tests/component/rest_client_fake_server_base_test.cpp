@@ -2,7 +2,7 @@
 // Created by sergi on 9/26/2023.
 //
 
-#include "https_rest_client_fake_server_base_test.hpp"
+#include "rest_client_fake_server_base_test.hpp"
 
 #include <thread>
 
@@ -15,13 +15,13 @@
 
 namespace rapic::tests {
 
-HttpsRestClientFakeServerBaseTest::HttpsRestClientFakeServerBaseTest(std::shared_ptr<rapic::ExecutionContext> execution_context,
-                                                                     const utils::HttpsRestServer::Configuration& configuration)
+RestClientFakeServerBaseTest::RestClientFakeServerBaseTest(std::shared_ptr<rapic::ExecutionContext> execution_context,
+                                                           std::shared_ptr<RestClient> client, std::shared_ptr<utils::RestServer> server)
     : execution_context_(std::move(execution_context))
-    , client_({configuration.address, std::to_string(configuration.service)}, *execution_context_)
-    , server_(configuration) {}
+    , client_(std::move(client))
+    , server_(std::move(server)) {}
 
-void HttpsRestClientFakeServerBaseTest::ValidateSequence(const Request& request, const Response& response) {
+void RestClientFakeServerBaseTest::ValidateSequence(const Request& request, const Response& response) {
     std::promise<rapic::Request> request_promise;
 
     auto server_execute = [&]() {
@@ -31,16 +31,20 @@ void HttpsRestClientFakeServerBaseTest::ValidateSequence(const Request& request,
             return response;
         };
 
-        server_.AcceptSingleConnection(server_callback);
+        server_->AcceptSingleConnection(server_callback);
     };
     server_thread_ = std::thread(server_execute);
 
     std::promise<rapic::Response> response_promise;
-    auto client_callback = [&](const rapic::Response& response) { response_promise.set_value(response); };
-    client_.SendRequest(request, client_callback);
 
-    const auto received_request = request_promise.get_future().get();
-    const auto received_response = response_promise.get_future().get();
+    std::function<void(const rapic::Response&)> client_callback = [&](const rapic::Response& response) { response_promise.set_value(response); };
+    client_->SendRequest(request, client_callback);
+
+    auto received_request_future = request_promise.get_future();
+    auto received_response_future = response_promise.get_future();
+
+    const auto received_request = received_request_future.get();
+    const auto received_response = received_response_future.get();
 
     server_thread_.join();
 

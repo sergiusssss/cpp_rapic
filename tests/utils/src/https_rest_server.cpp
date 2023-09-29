@@ -5,7 +5,6 @@
 #include <rapic/tests/utils/https_rest_server.hpp>
 
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/strand.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
@@ -15,6 +14,25 @@
 #include <rapic/tests/utils/logger.hpp>
 
 namespace rapic::tests::utils {
+
+namespace {
+
+HttpMethod Convert(const boost::beast::http::verb& method) {
+    switch (method) {
+    case boost::beast::http::verb::get:
+        return HttpMethod::kGet;
+    case boost::beast::http::verb::post:
+        return HttpMethod::kPost;
+    case boost::beast::http::verb::put:
+        return HttpMethod::kPut;
+    case boost::beast::http::verb::delete_:
+        return HttpMethod::kDelete;
+    }
+
+    return HttpMethod::kGet;
+}
+
+}  // namespace
 
 HttpsRestServer::HttpsRestServer(const Configuration& configuration)
     : io_context_()
@@ -32,37 +50,37 @@ HttpsRestServer::HttpsRestServer(const Configuration& configuration)
 }
 
 void HttpsRestServer::AcceptSingleConnection(const Callback& callback) {
-    RAPIC_UTILS_INFO("Accepting single connection. Started");
+    RAPIC_UTILS_INFO("Accepting single ssl connection. Started");
 
     boost::system::error_code error_code;
 
     auto socket = acceptor_.accept(error_code);
 
     if (error_code) {
-        RAPIC_UTILS_ERROR("Accepting single connection. Socket accepting failed with reason: {}", error_code.what());
+        RAPIC_UTILS_ERROR("Accepting single ssl connection. Socket accepting failed with reason: {}", error_code.what());
         return;
     }
 
-    RAPIC_UTILS_INFO("Accepting single connection. Connection accepted");
+    RAPIC_UTILS_INFO("Accepting single ssl connection. Connection accepted");
 
     ProcessConnection(std::move(socket), callback);
 
-    RAPIC_UTILS_INFO("Accepting single connection. Succeed");
+    RAPIC_UTILS_INFO("Accepting single ssl connection. Succeed");
 }
 
 void HttpsRestServer::ProcessConnection(boost::asio::ip::tcp::socket socket, const Callback& callback) {
     boost::asio::ssl::stream<boost::asio::ip::tcp::socket> stream{std::move(socket), ssl_context_};
 
-    RAPIC_UTILS_INFO("Processing connection. Started");
+    RAPIC_UTILS_INFO("Processing ssl connection. Started");
 
     boost::system::error_code error_code;
     stream.handshake(boost::asio::ssl::stream_base::server);
     if (error_code) {
-        RAPIC_UTILS_ERROR("Processing connection. Sll handshake failed with reason: {}", error_code.what());
+        RAPIC_UTILS_ERROR("Processing ssl connection. Sll handshake failed with reason: {}", error_code.what());
         return;
     }
 
-    RAPIC_UTILS_INFO("Processing connection. Sll handshake succeed");
+    RAPIC_UTILS_INFO("Processing ssl connection. Sll handshake succeed");
 
     while (!error_code) {
         boost::beast::flat_buffer buffer;
@@ -75,27 +93,27 @@ void HttpsRestServer::ProcessConnection(boost::asio::ip::tcp::socket socket, con
         }
 
         if (error_code) {
-            RAPIC_UTILS_ERROR("Processing connection. Request reading failed with reason: {}", error_code.what());
+            RAPIC_UTILS_ERROR("Processing ssl connection. Request reading failed with reason: {}", error_code.what());
             break;
         }
 
-        RAPIC_UTILS_INFO("Processing connection. Request read.");
+        RAPIC_UTILS_INFO("Processing ssl connection. Request read.");
 
         rapic::Request request;
         request.path = req.target();
         request.body = req.body();
-        request.method = rapic::HttpMethod::kGet;
+        request.method = Convert(req.method());
 
         const auto& headers = req.base();
         for (const auto& header : headers) {
             request.headers.emplace(header.name_string(), header.value());
         }
 
-        RAPIC_UTILS_INFO("Processing connection. Request prepared");
+        RAPIC_UTILS_INFO("Processing ssl connection. Request prepared");
 
         auto response = callback(request);
 
-        RAPIC_UTILS_INFO("Processing connection. Callback executed");
+        RAPIC_UTILS_INFO("Processing ssl connection. Callback executed");
 
         boost::beast::http::response<boost::beast::http::string_body> res{boost::beast::http::status::ok, req.version()};
 
@@ -106,24 +124,24 @@ void HttpsRestServer::ProcessConnection(boost::asio::ip::tcp::socket socket, con
         res.body() = response.body;
         res.prepare_payload();
 
-        RAPIC_UTILS_INFO("Processing connection. Response prepared");
+        RAPIC_UTILS_INFO("Processing ssl connection. Response prepared");
 
         boost::beast::http::write(stream, res, error_code);
 
         if (error_code) {
-            RAPIC_UTILS_ERROR("Processing connection. Response writing failed with reason: {}", error_code.what());
+            RAPIC_UTILS_ERROR("Processing ssl connection. Response writing failed with reason: {}", error_code.what());
             break;
         }
 
-        RAPIC_UTILS_INFO("Processing connection. Response sent");
+        RAPIC_UTILS_INFO("Processing ssl connection. Response sent");
     }
 
-    stream.next_layer().shutdown(boost::asio::ip::tcp::socket::shutdown_both, error_code);
+    stream.next_layer().shutdown(boost::asio::ip::tcp::socket::shutdown_send, error_code);
     if (error_code) {
-        RAPIC_UTILS_ERROR("Processing connection. Shutting downing failed with reason: {}", error_code.what());
+        RAPIC_UTILS_ERROR("Processing ssl connection. Shutting downing failed with reason: {}", error_code.what());
     }
 
-    RAPIC_UTILS_INFO("Processing connection. Succeed");
+    RAPIC_UTILS_INFO("Processing ssl connection. Succeed");
 }
 
 }  // namespace rapic::tests::utils

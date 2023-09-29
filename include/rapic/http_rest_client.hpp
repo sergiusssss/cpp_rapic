@@ -20,7 +20,7 @@ public:
     ~HttpRestClient() override;
 
     // Send request
-    void SendRequest(const Request& request, Callback callback) override;
+    void SendRequest(const Request& request, const Callback& callback) override;
 
 private:
     class Impl;

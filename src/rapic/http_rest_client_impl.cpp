@@ -4,18 +4,27 @@
 
 #include "http_rest_client_impl.hpp"
 
-#include "http_request_task.hpp"
+#include "tcp_stream.hpp"
 
 namespace rapic {
 
-HttpRestClient::Impl::Impl(std::string base_url, ExecutionContext& context)
+HttpRestClient::Impl::Impl(HttpRestClient::Configuration configuration, ExecutionContext& context)
     : context_(context)
-    , base_url_(std::move(base_url)) {}
+    , configuration_(std::move(configuration)) {}
 
 HttpRestClient::Impl::~Impl() = default;
 
-void HttpRestClient::Impl::SendRequest(const Request& request, RestClient::Callback callback) {
-    context_.PostTask(CreateHttpRequestTask(base_url_, request, callback));
+void HttpRestClient::Impl::SendRequest(const Request& request, const RestClient::Callback& callback) {
+    context_.PostTask(CreateRequestTask(request, callback));
+}
+
+const std::string& HttpRestClient::Impl::GetAddress() { return configuration_.address; }
+
+const std::string& HttpRestClient::Impl::GetService() { return configuration_.service; }
+
+std::unique_ptr<rapic::Stream>
+HttpRestClient::Impl::Connect(const boost::asio::ip::basic_resolver<boost::asio::ip::tcp, boost::asio::any_io_executor>::results_type& end_points) {
+    return std::make_unique<rapic::TcpStream>(end_points);
 }
 
 }  // namespace rapic

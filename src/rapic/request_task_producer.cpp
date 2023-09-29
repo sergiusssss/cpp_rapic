@@ -18,16 +18,12 @@ boost::beast::http::verb Convert(const HttpMethod& method) {
     switch (method) {
     case HttpMethod::kGet:
         return boost::beast::http::verb::get;
-        break;
     case HttpMethod::kPost:
         return boost::beast::http::verb::post;
-        break;
     case HttpMethod::kPut:
         return boost::beast::http::verb::put;
-        break;
     case HttpMethod::kDelete:
         return boost::beast::http::verb::delete_;
-        break;
     }
 
     return boost::beast::http::verb::unknown;

@@ -8,15 +8,11 @@
 
 namespace rapic {
 
-HttpRestClient::HttpRestClient(std::string base_url, rapic::ExecutionContext& context)
-    : impl_(std::make_unique<Impl>(std::move(base_url), context)) {}
+HttpRestClient::HttpRestClient(const Configuration& configuration, rapic::ExecutionContext& context)
+    : impl_(std::make_unique<Impl>(std::move(configuration), context)) {}
 
 HttpRestClient::~HttpRestClient() = default;
 
-void HttpRestClient::SendRequest(const Request& request, Callback callback) { impl_->SendRequest(request, callback); }
-
-const std::string& HttpRestClient::GetAddress() const { return impl_->GetAddress(); }
-
-ExecutionContext& HttpRestClient::Context() { return impl_->Context(); }
+void HttpRestClient::SendRequest(const Request& request, const RestClient::Callback& callback) { impl_->SendRequest(request, callback); }
 
 }  // namespace rapic

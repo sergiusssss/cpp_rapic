@@ -71,8 +71,8 @@ endif ()
 
 # Library source files
 set(SOURCE_FILES
-        #src/rapic/http_rest_client.cpp
-        #src/rapic/http_rest_client_impl.cpp
+        src/rapic/http_rest_client.cpp
+        src/rapic/http_rest_client_impl.cpp
         src/rapic/https_rest_client.cpp
         src/rapic/https_rest_client_impl.cpp
         src/rapic/request_task_producer.cpp

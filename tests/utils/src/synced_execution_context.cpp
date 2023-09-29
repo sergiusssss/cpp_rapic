@@ -10,13 +10,8 @@ void SyncedExecutionContext::PostTask(std::packaged_task<void(void)> task) {
     auto f = task.get_future();
     task();
     f.get();
-    // try{
-    //     f.get();
-    // }
-    // catch (...){
-    //     throw ;
-    // }
-    //
 }
+
+std::string SyncedExecutionContext::GetName() { return "Synced"; }
 
 }  // namespace rapic::tests::utils

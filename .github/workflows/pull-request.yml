@@ -9,14 +9,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Cache cmake dependencies
+        id: cmake-deps
+        uses: actions/cache@v3
+        with:
+          path: build/_deps
+
+      - if: ${{ steps.cmake-deps.outputs.cache-hit != 'true' }}
+        name: Notify that cmake don't have cash
+        continue-on-error: true
+        run: echo "Cmake don't have dependencies cache"
+
       - name: Create build folder
         run: mkdir build
+
       - name: Configuration
         working-directory: ./build
         run: cmake ${{ matrix.configs.cmake_args }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+
       - name: Build
         working-directory: ./build
         run: cmake --build . --config ${{ matrix.build_type }}
+
       - name: Run tests
         working-directory: ./build
         run: ctest --output-on-failure

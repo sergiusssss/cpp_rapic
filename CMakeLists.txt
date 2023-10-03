@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.18)
 project(rapic)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -20,21 +20,25 @@ FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG 7e635fca68d014934b4af8a1cf874f63989352b7 # v1.12.0
+        GIT_PROGRESS TRUE
 )
 FetchContent_Declare(
         boost
         GIT_REPOSITORY https://github.com/boostorg/boost.git
         GIT_TAG 564e2ac16907019696cdaba8a93e3588ec596062 # v1.83.0
+        GIT_PROGRESS TRUE
 )
 FetchContent_Declare(
         tracy
         GIT_REPOSITORY https://github.com/wolfpld/tracy.git
         GIT_TAG 897aec5b062664d2485f4f9a213715d2e527e0ca # v0.9.1
+        GIT_PROGRESS TRUE
 )
 FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG f8d7d77 # v1.14.0
+        GIT_PROGRESS TRUE
 )
 
 # Fetching of all required libraries if it's enabled.

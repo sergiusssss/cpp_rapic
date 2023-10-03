@@ -16,6 +16,7 @@ include(FetchContent)
 include(ExternalProject)
 
 # Declaration of all required libraries.
+Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git

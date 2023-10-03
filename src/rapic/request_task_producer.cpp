@@ -69,7 +69,7 @@ std::packaged_task<void(void)> RequestTaskProducer::CreateRequestTask(const Requ
 }
 
 void RequestTaskProducer::RequestTask(const Request& request, const RestClient::Callback& callback) {
-    const auto execution_start_time = std::chrono::steady_clock::now();
+    const auto execution_start_time = std::chrono::high_resolution_clock::now();
 
     RAPIC_TRACE("Request execution. Started. Address: {}; Service: {}; Path: {}", GetAddress(), GetService(), request.path);
 

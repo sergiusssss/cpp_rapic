@@ -14,6 +14,7 @@ jobs:
         id: cmake-deps
         uses: actions/cache@v3
         with:
+          key: ${{ runner.os }}-build
           path: build/_deps
 
       - if: ${{ steps.cmake-deps.outputs.cache-hit != 'true' }}

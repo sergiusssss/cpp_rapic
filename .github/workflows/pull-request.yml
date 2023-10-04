@@ -14,15 +14,11 @@ jobs:
         id: cmake-deps
         uses: actions/cache@v3
         with:
-          key: ${{ runner.os }}-build
+          key: ${{ runner.os }}-build-${{ matrix.build_type }}
           path: ./build/_deps
 
-      - if: ${{ steps.cmake-deps.outputs.cache-hit != 'true' }}
-        name: Notify that cmake don't have cash
-        continue-on-error: true
-        run: echo "Cmake don't have dependencies cache"
-
       - name: Create build folder
+        if: ${{ steps.cmake-deps.outputs.cache-hit != 'true' }}
         run: mkdir build
 
       - name: Configuration

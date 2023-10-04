@@ -8,16 +8,17 @@
 
 namespace rapic {
 
-class HttpRestClient : public RestClient {
+class HttpsRestClient : public RestClient {
 public:
     struct Configuration {
+        Configuration(const std::string& address, const std::string& service);
+        
         std::string address;
         std::string service;
     };
 
-    // Accept an ExecutionContext upon construction
-    explicit HttpRestClient(const Configuration& configuration, ExecutionContext& context);
-    ~HttpRestClient() override;
+    explicit HttpsRestClient(const Configuration& configuration, ExecutionContext& context);
+    ~HttpsRestClient() override;
 
     // Send request
     void SendRequest(const Request& request, const Callback& callback) override;

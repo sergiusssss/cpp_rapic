@@ -1,4 +1,4 @@
-name: PR
+name: PR verification
 run-name: PR verification - ${{ github.event.pull_request.title }}
 on: pull_request
 jobs:
@@ -9,18 +9,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Cache cmake dependencies
+        id: cmake-deps
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-build-${{ matrix.build_type }}-${{ matrix.configs.cache_key }}
+          path: ./build/_deps
+
       - name: Create build folder
+        if: ${{ steps.cmake-deps.outputs.cache-hit != 'true' }}
         run: mkdir build
+
       - name: Configuration
         working-directory: ./build
         run: cmake ${{ matrix.configs.cmake_args }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+
       - name: Build
         working-directory: ./build
         run: cmake --build . --config ${{ matrix.build_type }}
+
       - name: Run tests
         working-directory: ./build
-        run: |
-          ctest
+        run: ctest --output-on-failure
 
     strategy:
       fail-fast: false
@@ -30,19 +41,22 @@ jobs:
             name: Ubuntu clang,
             os: ubuntu-latest,
             cmake_args: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++,
+            cache_key: clang,
           }
           - {
             name: Ubuntu gcc,
             os: ubuntu-latest,
             cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
+            cache_key: gcc,
           }
-          - {
-            name: Windows MSVC,
-            os: windows-latest,
-          }
-          - {
-            name: Windows clang,
-            os: windows-latest,
-            cmake_args: -T ClangCl,
-          }
-        build_type: [Release, Debug] # Better to add Release later
+          # Uncomment when https://github.com/actions/runner-images/issues/8344 will be solved
+          #- {
+          #  name: Windows MSVC,
+          #  os: windows-latest,
+          #}
+          #- {
+          #  name: Windows clang,
+          #  os: windows-latest,
+          #  cmake_args: -T ClangCl,
+          #}
+        build_type: [Release] # Better to add Release later

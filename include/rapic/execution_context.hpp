@@ -4,17 +4,17 @@
 
 #pragma once
 
+#include <future>
 #include <memory>
 
 namespace rapic {
-
-class Task;
 
 // ExecutionContext interface
 class ExecutionContext {
 public:
     virtual ~ExecutionContext() = default;
-    virtual void PostTask(std::unique_ptr<Task> task) = 0;
+
+    virtual void PostTask(std::packaged_task<void(void)> task) = 0;
 };
 
 }  // namespace rapic

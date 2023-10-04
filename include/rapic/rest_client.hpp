@@ -14,21 +14,15 @@
 
 namespace rapic {
 
-// Callback for handling the Response
-using RestClientCallback = std::function<void(const Response&)>;
-
 // REST API client interface
 class RestClient {
 public:
+    // Callback for handling the Response
+    using Callback = std::function<void(const Response&)>;
+
     virtual ~RestClient() = default;
 
-    virtual void SendRequest(const Request& request, RestClientCallback callback, std::chrono::milliseconds timeout) = 0;
-
-    [[nodiscard]] virtual const std::string& GetBaseUrl() const = 0;
-
-    virtual void SetBaseUrl(const std::string& base_url) = 0;
-
-    [[nodiscard]] virtual ExecutionContext& Context() = 0;
+    virtual void SendRequest(const Request& request, const Callback& callback) = 0;
 };
 
 }  // namespace rapic

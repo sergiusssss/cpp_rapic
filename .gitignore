@@ -2,4 +2,5 @@
 .idea/
 
 # Build
+build*
 cmake-build-*

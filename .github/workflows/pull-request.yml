@@ -1,6 +1,9 @@
 name: PR verification
 run-name: PR verification - ${{ github.event.pull_request.title }}
-on: pull_request
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
 jobs:
   build-and-run-tests:
     name: ${{ matrix.configs.name }} (${{ matrix.build_type }}) Build and Run tests
@@ -49,14 +52,16 @@ jobs:
             cmake_args: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++,
             cache_key: gcc,
           }
-          # Uncomment when https://github.com/actions/runner-images/issues/8344 will be solved
-          #- {
-          #  name: Windows MSVC,
-          #  os: windows-latest,
-          #}
-          #- {
-          #  name: Windows clang,
-          #  os: windows-latest,
-          #  cmake_args: -T ClangCl,
-          #}
-        build_type: [Release] # Better to add Release later
+          - {
+            name: Windows MSVC,
+            os: windows-latest,
+            cmake_args: -D_WIN32_WINNT=0x0A00,
+            cache_key: msvc,
+          }
+          - {
+            name: Windows clang,
+            os: windows-latest,
+            cmake_args: -T ClangCl,
+            cache_key: clang,
+          }
+        build_type: [ Release ] # Better to add Debug later

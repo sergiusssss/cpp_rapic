@@ -55,7 +55,7 @@ jobs:
           - {
             name: Windows MSVC,
             os: windows-latest,
-            cmake_args: -D_WIN32_WINNT = 0x0A00,
+            cmake_args: -D_WIN32_WINNT=0x0A00,
             cache_key: msvc,
           }
           - {

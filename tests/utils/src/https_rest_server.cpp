@@ -27,6 +27,8 @@ HttpMethod Convert(const boost::beast::http::verb& method) {
         return HttpMethod::kPut;
     case boost::beast::http::verb::delete_:
         return HttpMethod::kDelete;
+    default:
+        return HttpMethod::kGet;
     }
 
     return HttpMethod::kGet;

@@ -50,13 +50,13 @@ jobs:
             cache_key: gcc,
           }
           # Uncomment when https://github.com/actions/runner-images/issues/8344 will be solved
-          #- {
-          #  name: Windows MSVC,
-          #  os: windows-latest,
-          #}
-          #- {
-          #  name: Windows clang,
-          #  os: windows-latest,
-          #  cmake_args: -T ClangCl,
-          #}
-        build_type: [Release] # Better to add Release later
+          - {
+            name: Windows MSVC,
+            os: windows-latest,
+          }
+          - {
+            name: Windows clang,
+            os: windows-latest,
+            cmake_args: -T ClangCl,
+          }
+        build_type: [ Release ] # Better to add Debug later

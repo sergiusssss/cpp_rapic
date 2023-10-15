@@ -1,5 +1,5 @@
-name: PR verification
-run-name: PR verification - ${{ github.event.pull_request.title }}
+name: Branch verification
+run-name: Branch verification ${{ github.event.pull_request.title }}
 on:
   push:
     branches: [ "master" ]
@@ -55,13 +55,13 @@ jobs:
           - {
             name: Windows MSVC,
             os: windows-latest,
-            cmake_args: -D_WIN32_WINNT=0x0A00,
+            cmake_args: -D_WIN32_WINNT=0x0601,
             cache_key: msvc,
           }
           - {
             name: Windows clang,
             os: windows-latest,
-            cmake_args: -T ClangCl,
+            cmake_args: -T ClangCl -D_WIN32_WINNT=0x0601,
             cache_key: clang,
           }
         build_type: [ Release ] # Better to add Debug later
